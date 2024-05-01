@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:online_gallery/pages/home_page.dart';
+import 'package:get/route_manager.dart';
+import 'package:online_gallery/features/home/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
