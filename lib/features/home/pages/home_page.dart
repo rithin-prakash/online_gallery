@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
 
 import 'package:online_gallery/features/home/controllers/home_page_controller.dart';
+import 'package:online_gallery/features/home/widgets/search_text.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -43,60 +41,41 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: textEdit,
-                    decoration:
-                        const InputDecoration(hintText: 'Search for images'),
-                  ),
-                ),
-                Container(
-                  decoration: const ShapeDecoration(
-                    color: Colors.black26,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      _loadImages();
-                    },
-                    icon: const Icon(
-                      Icons.search,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
+          SearchText(
+              controller: textEdit,
+              onSearch: () {
+                _loadImages();
+              }),
           Expanded(
-            child: Obx(() {
-              return _c.isLoading.value
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(2),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: getItemCountPerRow(),
-                      ),
-                      itemCount: _c.model.length,
-                      itemBuilder: (_, i) {
-                        return Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Image.network(
-                            _c.model[i].previewUrl,
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      });
-            }),
+            child: Obx(
+              () {
+                return _c.isLoading.value
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _c.model.isEmpty
+                        ? const Center(
+                            child: Text('No images found'),
+                          )
+                        : GridView.builder(
+                            padding: const EdgeInsets.all(2),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: getItemCountPerRow(),
+                            ),
+                            itemCount: _c.model.length,
+                            itemBuilder: (_, i) {
+                              return Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Image.network(
+                                  _c.model[i].largeImageUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          );
+              },
+            ),
           ),
         ],
       ),
