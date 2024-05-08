@@ -4,22 +4,41 @@ import 'package:online_gallery/models/photo_model.dart';
 import 'package:online_gallery/services/api_service.dart';
 
 class HomePageController extends GetxController {
-  late List<PhotoModel> model;
+  List<PhotoModel> model = [];
   RxBool isLoading = false.obs;
+  RxBool isLoadingMore = false.obs;
 
-  void loadImages(String query) async {
-    isLoading(true);
+  int currentPage = 1;
 
-    final res = await ApiService.instance.getImages(query);
+  void loadImages(String query, bool newSearch) async {
+    if (newSearch) {
+      currentPage = 1;
+      isLoading(true);
+    } else {
+      currentPage = currentPage + 1;
+      isLoadingMore(true);
+    }
+
+    final res = await ApiService.instance.getImages(query, currentPage);
 
     res.fold(
       (l) {
+        isLoading(false);
         model = [];
         Get.snackbar('Failed', l.message);
       },
-      (r) => model = r,
-    );
+      (r) {
+        isLoading(false);
 
-    isLoading(false);
+        if (currentPage == 1) {
+          model.clear();
+          model = r;
+        } else {
+          isLoadingMore(false);
+
+          model.addAll(r);
+        }
+      },
+    );
   }
 }

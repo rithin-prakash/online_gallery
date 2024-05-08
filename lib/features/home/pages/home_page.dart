@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:online_gallery/features/home/controllers/home_page_controller.dart';
+import 'package:online_gallery/features/home/widgets/images_grid.dart';
 import 'package:online_gallery/features/home/widgets/search_text.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,69 +16,63 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _c = Get.put(HomePageController());
   final textEdit = TextEditingController();
+  final scrollController = PageController();
 
   @override
   void initState() {
     super.initState();
 
-    _loadImages();
+    _loadImages(true);
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        _loadImages(false);
+      }
+    });
   }
 
-  _loadImages() {
-    _c.loadImages(textEdit.text.trim());
-  }
-
-  int getItemCountPerRow() {
-    double minTileWidth = 100; //in your case
-    double availableWidth = MediaQuery.of(context).size.width;
-
-    int i = availableWidth ~/ minTileWidth;
-    return i;
+  _loadImages(bool newSearch) {
+    _c.loadImages(textEdit.text.trim(), newSearch);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Column(
-        children: [
-          SearchText(
-              controller: textEdit,
-              onSearch: () {
-                _loadImages();
-              }),
-          Expanded(
-            child: Obx(
-              () {
-                return _c.isLoading.value
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : _c.model.isEmpty
-                        ? const Center(
-                            child: Text('No images found'),
-                          )
-                        : GridView.builder(
-                            padding: const EdgeInsets.all(2),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: getItemCountPerRow(),
-                            ),
-                            itemCount: _c.model.length,
-                            itemBuilder: (_, i) {
-                              return Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Image.network(
-                                  _c.model[i].largeImageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              );
-                            },
-                          );
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            SearchText(
+                controller: textEdit,
+                onSearch: () {
+                  _loadImages(true);
+                }),
+            Expanded(
+              child: Obx(
+                () {
+                  return _c.isLoading.value
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : _c.model.isEmpty
+                          ? const Center(
+                              child: Text('No images found'),
+                            )
+                          : Column(
+                              children: [
+                                ImagesGrid(scrollController),
+                                if (_c.isLoadingMore.value)
+                                  const Padding(
+                                    padding: EdgeInsets.all(12.0),
+                                    child: CircularProgressIndicator(),
+                                  ),
+                              ],
+                            );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
