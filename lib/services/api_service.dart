@@ -20,7 +20,8 @@ class ApiService {
         'key': _key,
         "q": query.split(' ').join('+'),
         "image_type": "photo",
-        'page': page.toString()
+        'page': page.toString(),
+        'per_page': '200'
       };
 
       var url = Uri.https(_baseUrl, '/api/', data);
