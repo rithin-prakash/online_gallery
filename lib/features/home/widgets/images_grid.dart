@@ -53,7 +53,7 @@ class ImagesGrid extends StatelessWidget {
                 _showFullScreen(_c.model[i].largeImageUrl, context);
               },
               child: Image.network(
-                _c.model[i].largeImageUrl,
+                _c.model[i].previewUrl,
                 fit: BoxFit.cover,
               ),
             ),
