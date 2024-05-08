@@ -24,7 +24,7 @@ class ImagesGrid extends StatelessWidget {
       context: context,
       builder: (_) {
         return Dialog(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           clipBehavior: Clip.none,
           insetPadding: EdgeInsets.zero,
           child: FullscreenImage(
