@@ -26,7 +26,6 @@ class PhotoModel {
   });
 
   factory PhotoModel.fromJson(Map<String, dynamic> json) {
-    print(json);
     return PhotoModel(
       previewUrl: json['previewURL'],
       webFormatUrl: json['webformatURL'],

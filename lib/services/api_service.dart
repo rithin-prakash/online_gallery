@@ -37,7 +37,6 @@ class ApiService {
             .toList(),
       );
     } catch (e) {
-      print(e);
       return Left(ApiFailure(msg: e.toString()));
     }
   }
