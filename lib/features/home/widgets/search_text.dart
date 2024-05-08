@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/debouncer.dart';
+
 class SearchText extends StatelessWidget {
-  const SearchText({
+  SearchText({
     super.key,
     required this.controller,
     required this.onSearch,
   });
   final TextEditingController controller;
   final VoidCallback onSearch;
+
+  final debouncer = Debouncer(milliseconds: 500);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,12 @@ class SearchText extends StatelessWidget {
               ),
             ),
             child: IconButton(
-              onPressed: onSearch,
+              onPressed: () {
+                //debouncer added
+                debouncer.run(() {
+                  onSearch();
+                });
+              },
               icon: const Icon(
                 Icons.search,
               ),
