@@ -15,6 +15,7 @@ class HomePageController extends GetxController {
       currentPage = 1;
       isLoading(true);
     } else {
+      if (currentPage == 3) return;
       currentPage = currentPage + 1;
       isLoadingMore(true);
     }
