@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 import 'package:get/get.dart';
 
@@ -13,12 +16,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _c = Get.put(HomePageController());
+  final textEdit = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
-    _c.loadImages('');
+    _loadImages();
+  }
+
+  _loadImages() {
+    _c.loadImages(textEdit.text.trim());
   }
 
   int getItemCountPerRow() {
@@ -33,27 +41,65 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Obx(() {
-        return _c.isLoading.value
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : GridView.builder(
-                padding: const EdgeInsets.all(2),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: getItemCountPerRow(),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: textEdit,
+                    decoration:
+                        const InputDecoration(hintText: 'Search for images'),
+                  ),
                 ),
-                itemCount: _c.model.length,
-                itemBuilder: (_, i) {
-                  return Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Image.network(
-                      _c.model[i].previewUrl,
-                      fit: BoxFit.cover,
+                Container(
+                  decoration: const ShapeDecoration(
+                    color: Colors.black26,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5),
+                      ),
                     ),
-                  );
-                });
-      }),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      _loadImages();
+                    },
+                    icon: const Icon(
+                      Icons.search,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Obx(() {
+              return _c.isLoading.value
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : GridView.builder(
+                      padding: const EdgeInsets.all(2),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: getItemCountPerRow(),
+                      ),
+                      itemCount: _c.model.length,
+                      itemBuilder: (_, i) {
+                        return Padding(
+                          padding: const EdgeInsets.all(2.0),
+                          child: Image.network(
+                            _c.model[i].previewUrl,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      });
+            }),
+          ),
+        ],
+      ),
     );
   }
 }

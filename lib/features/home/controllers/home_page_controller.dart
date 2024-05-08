@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
+
 import 'package:online_gallery/models/photo_model.dart';
 import 'package:online_gallery/services/api_service.dart';
 
 class HomePageController extends GetxController {
-  late final List<PhotoModel> model;
+  late List<PhotoModel> model;
   RxBool isLoading = false.obs;
 
   void loadImages(String query) async {
